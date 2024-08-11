@@ -65,16 +65,20 @@ export class RegisterComponent {
     this.isLoading.set(true);
 
     const newUser: NewUser = {
-      username: this.newUser.value.name!,
+      name: this.newUser.value.name!,
       email: this.newUser.value.email!,
       password: this.newUser.value.password!,
     }
-
-    this.authService.register(newUser).pipe(      
+    
+    this.authService.register(newUser).pipe(   
       switchMap(() => this.authService.login(newUser.email, newUser.password)),
       tap(() => this.router.navigate(['/covid-info'])),
       catchError(err => {
-        this.snackBar.open('Error occurred during registration', 'OK', {duration: 5000});
+        let msg = 'Error occurred during registration';
+        if(err instanceof Error) {
+          msg += `: ${err.message}`;
+        } 
+        this.snackBar.open(msg, 'OK', {duration: 5000});
         throw err;
       }),                                                                              // Error
       finalize(() => this.isLoading.set(false)),
