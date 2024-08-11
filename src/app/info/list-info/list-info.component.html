@@ -1,1 +1,8 @@
-<p>list-info works!</p>
+<div class="cards">
+    @for (country of countries(); track country) {
+        <app-info class="country-info-card" [country]="country"></app-info>
+    }
+    @empty {
+        <p>Select countries to display</p>
+    }
+</div>

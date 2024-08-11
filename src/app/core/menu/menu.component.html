@@ -1,1 +1,14 @@
-<p>menu works!</p>
+<mat-toolbar>
+    <img src="cov19.png">
+    <span>Angular COVID Information</span>
+    <div class="user-panel">
+        @if (authService.isLoggedIn) {            
+            <button mat-button (click)="logout()" matTooltip="{{authService.currentUser()?.username}} logged in."><mat-icon>logout</mat-icon>Logout</button>
+        } @else {
+            <button mat-button routerLink="/register"><mat-icon>editnote</mat-icon>Register</button>
+            <button mat-button (click)="login()"><mat-icon>login</mat-icon>Login</button>
+        }
+        
+        <!-- <button mat-icon-button><mat-icon>person</mat-icon></button> -->
+    </div>
+</mat-toolbar>

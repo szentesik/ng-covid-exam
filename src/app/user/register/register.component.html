@@ -1,1 +1,61 @@
-<p>register works!</p>
+<form [formGroup]="newUser" (ngSubmit)="submit()">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Regisztráció</mat-card-title>             
+        </mat-card-header>
+
+        <mat-card-content>
+            <div class="registration-form">
+                <mat-form-field appearance="outline">
+                    <mat-label>Name</mat-label>
+                    <input type="text" matInput formControlName="name" autocomplete="name">
+                </mat-form-field>
+                
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input type="email" matInput formControlName="email" autocomplete="email">
+                    @if (newUser.controls.email.hasError('required')) {
+                        <mat-error>Email address is required</mat-error>
+                    }
+                    @else if (newUser.controls.email.hasError('email')) {
+                        <mat-error>Please provide a valid email address</mat-error>
+                    }
+                </mat-form-field>
+        
+                <mat-form-field appearance="outline">
+                    <mat-label>Password</mat-label>
+                    <input type="password" matInput formControlName="password" autocomplete="new-password">
+                    @if (newUser.controls.password.hasError('required')) {
+                        <mat-error>Password is required</mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Confirm password</mat-label>
+                    <input type="password" matInput formControlName="confirmPassword"
+                    [errorStateMatcher]="matcher">
+                    @if (newUser.controls.confirmPassword.hasError('required')) {
+                        <mat-error>Please type the password again</mat-error>
+                    }                    
+                    @else if (newUser.hasError('PasswordNoMatch')) {
+                        <mat-error>Passwords do not match</mat-error>
+                    }                                                                         
+                </mat-form-field> 
+            </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+            <div class="registration-actions">
+                <button mat-raised-button color="primary" type="submit"
+                [disabled]="newUser.invalid || isLoading()">
+                @if (isLoading()) {
+                    <mat-spinner color="primary" [diameter]="20" />
+                } @else {
+                    Submit
+                }
+                </button>
+                <button mat-button type="button" routerLink="/covid-info">Back</button>
+            </div>
+        </mat-card-actions>
+    </mat-card>
+</form>

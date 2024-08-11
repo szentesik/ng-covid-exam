@@ -1,0 +1,30 @@
+mat-card {
+    width: 50%;
+    margin: 24px auto;
+    padding: 32px;
+
+    mat-card-header {
+        margin-bottom: 24px;        
+
+        mat-card-subtitle {
+            color: red;
+        }
+    }
+
+
+    .registration-form {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+
+        mat-form-field {
+            width: 80%;
+        }
+    }
+
+    .registration-actions {
+        display: flex;     
+        gap: 12px;
+    }
+}
