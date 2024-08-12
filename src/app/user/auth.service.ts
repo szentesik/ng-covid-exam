@@ -45,7 +45,7 @@ export class AuthService {
     );    
   }
   
-  // Tries to log in an existing user
+  // Tries to log in a registered user
   login(email: string, password: string): Observable<User> {    
     return from(db.users.where("email").equalsIgnoreCase(email).toArray()).pipe(
       tap(usersFound => { if(usersFound.length < 1) throw new Error('User not found') }),

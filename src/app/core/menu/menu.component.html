@@ -3,10 +3,10 @@
     <span>Angular COVID Information</span>
     <div class="user-panel">
         @if (authService.isLoggedIn) {            
-            <button mat-button (click)="logout()" matTooltip="{{authService.currentUser()?.name}} logged in."><mat-icon>logout</mat-icon>Logout</button>
+            <button mat-button (click)="logout()" matTooltip="Log out {{authService.currentUser()?.name}}"><mat-icon>logout</mat-icon>Logout</button>            
         } @else {
             <button mat-button routerLink="/register"><mat-icon>editnote</mat-icon>Register</button>
-            <button mat-button (click)="login()"><mat-icon>login</mat-icon>Login</button>
+            <button mat-button (click)="login()" #loginBtn><mat-icon>login</mat-icon>Login</button>
         }
         
         <!-- <button mat-icon-button><mat-icon>person</mat-icon></button> -->

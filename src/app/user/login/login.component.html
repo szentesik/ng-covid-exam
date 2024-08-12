@@ -1,1 +1,17 @@
-<p>login works!</p>
+
+<mat-dialog-content>  
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input type="email" matInput [(ngModel)]="email" autocomplete="email">
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Password</mat-label>
+    <input type="password" matInput [(ngModel)]="password" autocomplete="password">
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>  
+  <button mat-button [mat-dialog-close]="{email: email(), password: password()}" cdkFocusInitial>Login</button>  
+  <button mat-button mat-dialog-close>Cancel</button> 
+</mat-dialog-actions>
+
+

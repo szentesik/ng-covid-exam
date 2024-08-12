@@ -26,7 +26,8 @@ class GroupErrorStateMatcher implements ErrorStateMatcher {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSnackBarModule, MatProgressSpinnerModule, ReactiveFormsModule, RouterLink],
+  imports: [MatCardModule, MatButtonModule, MatFormFieldModule, MatInputModule, 
+    MatSnackBarModule, MatProgressSpinnerModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -69,7 +70,7 @@ export class RegisterComponent {
       email: this.newUser.value.email!,
       password: this.newUser.value.password!,
     }
-    
+
     this.authService.register(newUser).pipe(   
       switchMap(() => this.authService.login(newUser.email, newUser.password)),
       tap(() => this.router.navigate(['/covid-info'])),
