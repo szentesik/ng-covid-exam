@@ -10,7 +10,7 @@ export interface VaccinationInfo {
     abbreviation: string,
     location: string,
     iso: number,
-    capital_city: number,
+    capital_city: string,
     lat: number,
     long: number,
     updated: Date

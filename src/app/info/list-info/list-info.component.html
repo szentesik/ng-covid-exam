@@ -1,8 +1,72 @@
-<div class="cards">
-    @for (country of countries(); track country) {
-        <app-info class="country-info-card" [country]="country"></app-info>
+
+<mat-sidenav-container class="container">
+    <mat-sidenav mode="side" [opened]="showSearch()">
+        <app-search/>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        @if (!isLoading()) {
+        <table mat-table [dataSource]="dataSource()">
+            
+            <ng-container matColumnDef="country">
+              <th mat-header-cell *matHeaderCellDef> Country </th>
+              <td mat-cell *matCellDef="let data"> {{data.country}} </td>
+            </ng-container>
+                      
+            <ng-container matColumnDef="confirmed">
+              <th mat-header-cell *matHeaderCellDef> Confirmed </th>
+              <td mat-cell *matCellDef="let data"> {{data.confirmed}} </td>
+            </ng-container>          
+            
+            <ng-container matColumnDef="deaths">
+              <th mat-header-cell *matHeaderCellDef> Deaths </th>
+              <td mat-cell *matCellDef="let data"> {{data.deaths}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="recovered">
+              <th mat-header-cell *matHeaderCellDef> Recovered </th>
+              <td mat-cell *matCellDef="let data"> {{data.recovered > 0 ? data.recovered : 'N/A'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="administered">
+              <th mat-header-cell *matHeaderCellDef> Administered </th>
+              <td mat-cell *matCellDef="let data"> {{data.administered}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="people_vaccinated">
+              <th mat-header-cell *matHeaderCellDef> Vaccinated </th>
+              <td mat-cell *matCellDef="let data"> {{data.people_vaccinated}} </td>
+            </ng-container>
+          
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          </table>
+        }
+        @else {
+          <mat-spinner color="primary" [diameter]="200"/>
+        }
+    </mat-sidenav-content>  
+</mat-sidenav-container>
+
+
+<!-- 
+<div class="content">
+    @if (showSearch()) {
+        <app-search>
+
+        </app-search>
+
     }
-    @empty {
-        <p>Select countries to display</p>
-    }
+
+    <div class="cards">
+        @for (country of countries().sort(); track country) {
+            <app-info class="country-info-card" [country]="country"></app-info>
+        }
+        @empty {
+            <p>Select countries to display</p>
+        }
+    </div>
 </div>
+
+ -->
+ 

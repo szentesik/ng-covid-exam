@@ -1,0 +1,11 @@
+.sidepanel {
+    padding: 6px;
+    margin: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;    
+    mat-expansion-panel {
+        width: 80%;
+    }
+    
+}
