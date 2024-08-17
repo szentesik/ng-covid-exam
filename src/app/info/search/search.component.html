@@ -1,22 +1,26 @@
-<div class="sidepanel">
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title>Countries</mat-panel-title>
-      <mat-panel-description>{{countryList.selectedOptions.selected.length}} / {{countries().length}}</mat-panel-description>
-    </mat-expansion-panel-header>
-    <mat-selection-list #countryList>
-      @for (country of countries(); track country) {
-        <mat-list-option selected togglePosition="before">{{country}}</mat-list-option>
-      }
-    </mat-selection-list>
-  </mat-expansion-panel>
-  <div>   
-    <p><mat-slide-toggle checked>Show cases</mat-slide-toggle></p>
-    <p><mat-slide-toggle checked>Show vaccination data</mat-slide-toggle></p>
-  </div>
-  <div style="text-align: center; width: 80%;">
-    <button mat-raised-button color="primary" type="submit">Search</button>
-  </div>  
-</div>
+@if (filterForm) {
+  <form class="search-panel" [formGroup]="filterForm" (ngSubmit)="submit()">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Countries</mat-panel-title>
+        <mat-panel-description>{{countryList.selectedOptions.selected.length}} / {{countries().length}}</mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-selection-list #countryList [formControl]="countriesControl">
+        @for (country of countries(); track country) {
+          <mat-list-option togglePosition="before" 
+          [value]="country" 
+          [selected]="selectedCountries.includes(country)">{{country}}</mat-list-option>
+        }
+      </mat-selection-list>
+    </mat-expansion-panel>
+    <div>   
+      <p><mat-slide-toggle formControlName="showCases">Show cases</mat-slide-toggle></p>
+      <p><mat-slide-toggle formControlName="showVaccination">Show vaccination data</mat-slide-toggle></p>
+    </div>
+    <div style="text-align: center; width: 80%;">
+      <button mat-raised-button color="primary" type="submit">Search</button>
+    </div>
+  </form>
+}
 
 

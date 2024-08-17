@@ -9,6 +9,7 @@ import { delay, finalize, map, of, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CovidInfo } from '../models/covid-info.model';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Filter } from '../models/filter.model';
 
 @Component({
   selector: 'app-list-info',
@@ -23,7 +24,8 @@ export class ListInfoComponent {
 
   protected showSearch = signal(true);
 
-  displayedColumns: string[] = ['country', 'confirmed', 'deaths', 'recovered', 'administered', 'people_vaccinated'];
+
+  displayedColumns = signal<string[]>([]);
 
   dataSource = signal<CovidInfo[]>([]);
 
@@ -32,21 +34,44 @@ export class ListInfoComponent {
   constructor(
     private readonly covidInfoService: CovidInfoService,
     private readonly destroyRef: DestroyRef
-  ) {
-    this.refreshData();    
-  }
+  ) { }
+  
+  
+  refreshData(filter: Filter) {
+    console.log('refreshData:', JSON.stringify(filter));    
+    this.isLoading.set(true);       
+    
+    // Set displayed columns
+    this.displayedColumns.set([
+      'country'
+    ]);
+    if(filter.showCases) {
+      this.displayedColumns.set([
+        ...this.displayedColumns(),
+        'confirmed', 
+        'deaths', 
+        'recovered'
+      ]);
+    }
+    if(filter.showVaccination) {
+      this.displayedColumns.set([
+        ...this.displayedColumns(),
+        'administered',
+        'people_vaccinated'
+      ]);
+    }    
 
-  refreshData() {
-    this.isLoading.set(true);
+    // Retrieve data
+    // TODO: move to separate datasource object
     let dataSet: CovidInfo[] = [];
-    this.covidInfoService.getCasesMultiple(this.countries()).pipe(
+    this.covidInfoService.getCasesMultiple(filter.countries).pipe(
       tap(res => dataSet = res),
-      switchMap(() => this.covidInfoService.getVaccinationMultiple(this.countries())),      
+      switchMap(() => this.covidInfoService.getVaccinationMultiple(filter.countries)),      
       switchMap(vaccarr => {
         vaccarr.forEach(vacc => {
           dataSet.forEach((d, ix) => {
             if(vacc.country === d.country) {              
-              dataSet[ix] = {
+              dataSet[ix] = {                 // Merge case and vaccination data
                 ...d,
                 ...vacc
               }            
@@ -60,5 +85,4 @@ export class ListInfoComponent {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe();
   }  
-
 }

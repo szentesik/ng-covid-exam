@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, Vie
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../user/auth.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
@@ -26,7 +26,8 @@ export class MenuComponent {
     protected readonly authService : AuthService,
     private readonly dialog: MatDialog,
     private readonly destroyRef: DestroyRef,
-    private readonly snackBar: MatSnackBar
+    private readonly snackBar: MatSnackBar,
+    private readonly router: Router
   ) { }
 
   logout() {
@@ -47,6 +48,7 @@ export class MenuComponent {
     dialogRef.afterClosed().pipe(        
       filter(result => result),   // Stop on cancel
       switchMap(result => this.authService.login(result.email, result.password)),
+      tap(() => this.router.navigate(['/covid-info'])),
       catchError(err => {
         let msg = 'Login failed';
         if(err instanceof Error) {
