@@ -10,6 +10,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CovidInfo } from '../models/covid-info.model';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Filter } from '../models/filter.model';
+import { AuthService } from '../../user/auth.service';
+import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-list-info',
@@ -33,13 +36,23 @@ export class ListInfoComponent {
 
   constructor(
     private readonly covidInfoService: CovidInfoService,
+    private readonly authService: AuthService,
+    private readonly router: Router,
+    private readonly snackBar: MatSnackBar,
     private readonly destroyRef: DestroyRef
-  ) { }
-  
+  ) { }  
   
   refreshData(filter: Filter) {
     console.log('refreshData:', JSON.stringify(filter));    
-    this.isLoading.set(true);       
+    this.isLoading.set(true);
+    
+    // Unregistered users limited for 3 searches maximum
+    if(this.authService.isLoggedIn || this.authService.guestSearchAllowed) {
+      this.authService.consumeSearchAttempt();
+    } else {
+      this.snackBar.open('Please log in or register for further searches', 'OK', {duration: 5000});
+      this.router.navigate(['/register']);
+    }
     
     // Set displayed columns
     this.displayedColumns.set([

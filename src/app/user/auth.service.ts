@@ -2,7 +2,6 @@ import { Injectable, signal } from '@angular/core';
 import { NewUser } from './models/new-user.model';
 import { from, map, Observable, of, switchMap, tap } from 'rxjs';
 import { User } from './models/user.model';
-import { Router } from '@angular/router';
 import { db } from '../core/db/db';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 
@@ -13,15 +12,24 @@ export class AuthService {
 
   private readonly CURRENT_USER_KEY = 'currentUser';
 
-  private readonly _currentUser = signal<User | undefined>(undefined);    
+  private readonly SEARCH_COUNT_KEY = 'searches';
 
-  constructor(    
-    private readonly router: Router
-  ) {
+  private readonly GUEST_SEARCH_LIMIT = 3;
+
+  private readonly _currentUser = signal<User | undefined>(undefined);   
+  
+  private _searchCount = signal(0);     // Number of searches consumed by unregistered user
+
+  constructor( ) {
     const storedUser = localStorage.getItem(this.CURRENT_USER_KEY);
     if(storedUser) {
       this._currentUser.set(JSON.parse(storedUser));
-    } 
+    }
+    
+    const searchCount = sessionStorage.getItem(this.SEARCH_COUNT_KEY);
+    if(searchCount) {     
+      this._searchCount.set(Number(searchCount));
+    }
   }
 
   get currentUser() {
@@ -31,6 +39,18 @@ export class AuthService {
   get isLoggedIn() {
     return this._currentUser() !== undefined;
   }  
+
+  get guestSearchAllowed() {
+    return this._searchCount() < this.GUEST_SEARCH_LIMIT;
+  }
+
+  consumeSearchAttempt() {
+    if(this.isLoggedIn) {
+      return;
+    }   
+    this._searchCount.set(this._searchCount() + 1);
+    this.storeSearchCount();
+  }
  
   // Registers a new user with the app
   register(newUser: NewUser) : Observable<User> {    
@@ -56,7 +76,11 @@ export class AuthService {
         console.log(`User ${user.name} (${user.email}) logged in.`);
         this._currentUser.set(user);
         this.storeUser(user);
-      })      
+      }),
+      tap(() => {
+        this._searchCount.set(0);
+        this.clearSearchCount();
+      })
     );
   }
 
@@ -73,7 +97,15 @@ export class AuthService {
 
   private clearStoredUser() {
     localStorage.removeItem(this.CURRENT_USER_KEY);
+  }  
+
+  private storeSearchCount() {
+    sessionStorage.setItem(this.SEARCH_COUNT_KEY, this._searchCount().toString());
   }
+
+  private clearSearchCount() {
+    sessionStorage.removeItem(this.SEARCH_COUNT_KEY);
+  }  
 }
 
 
