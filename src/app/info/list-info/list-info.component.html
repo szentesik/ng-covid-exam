@@ -41,6 +41,15 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumns();"></tr>
 
           </table>
+
+          <div class="charts">
+            @if (showCasesChart()) {
+              <app-chart type="cases" [dataSource]="dataSource()"/>
+            }
+            @if (showVaccinationChart()) {
+              <app-chart type="vaccination" [dataSource]="dataSource()"/>
+            }
+          </div>
         }
         @else {
           <mat-spinner color="primary" [diameter]="200"/>

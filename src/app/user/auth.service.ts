@@ -88,6 +88,7 @@ export class AuthService {
   logout() {
     this.clearStoredUser();
     this._currentUser.set(undefined);
+    sessionStorage.clear();
     return of(true);
   }  
 

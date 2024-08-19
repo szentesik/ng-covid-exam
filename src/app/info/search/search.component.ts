@@ -26,6 +26,8 @@ export class SearchComponent implements OnInit {
 
   @Input() showVaccination = true; 
 
+  @Input() showCharts = true;
+
   @Output() onSubmit = new EventEmitter<Filter>;
 
   filterForm?: FormGroup; 
@@ -41,6 +43,7 @@ export class SearchComponent implements OnInit {
       countries: this.countriesControl,
       showCases: new FormControl<boolean>(this.showCases),
       showVaccination: new FormControl<boolean>(this.showVaccination),
+      showCharts: new FormControl<boolean>(this.showCharts),
     });  
   }
 
@@ -55,6 +58,7 @@ export class SearchComponent implements OnInit {
       countries: this.countriesControl.value ?? this.selectedCountries,
       showCases: this.filterForm.value.showCases,
       showVaccination: this.filterForm.value.showVaccination,
+      showCharts: this.filterForm.value.showCharts,
     });  
   } 
 }

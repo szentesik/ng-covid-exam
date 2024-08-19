@@ -23,6 +23,8 @@
     "@angular/router": "^18.1.0",
     "bcryptjs": "^2.4.3",
     "dexie": "^4.0.8",
+    "highcharts": "^11.4.7",
+    "highcharts-angular": "^4.0.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
