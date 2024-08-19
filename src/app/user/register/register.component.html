@@ -14,10 +14,10 @@
                 <mat-form-field appearance="outline">
                     <mat-label>Email</mat-label>
                     <input type="email" matInput formControlName="email" autocomplete="email">
-                    @if (newUser.controls.email.hasError('required')) {
+                    @if (newUser.controls.email.errors?.['required']) {
                         <mat-error>Email address is required</mat-error>
                     }
-                    @else if (newUser.controls.email.hasError('email')) {
+                    @else if (newUser.controls.email.errors?.['email']) {
                         <mat-error>Please provide a valid email address</mat-error>
                     }
                 </mat-form-field>
@@ -25,7 +25,7 @@
                 <mat-form-field appearance="outline">
                     <mat-label>Password</mat-label>
                     <input type="password" matInput formControlName="password" autocomplete="new-password">
-                    @if (newUser.controls.password.hasError('required')) {
+                    @if (newUser.controls.password.errors?.['required']) {
                         <mat-error>Password is required</mat-error>
                     }
                 </mat-form-field>
@@ -34,10 +34,10 @@
                     <mat-label>Confirm password</mat-label>
                     <input type="password" matInput formControlName="confirmPassword"
                     [errorStateMatcher]="matcher">
-                    @if (newUser.controls.confirmPassword.hasError('required')) {
+                    @if (newUser.controls.confirmPassword.errors?.['required']) {
                         <mat-error>Please type the password again</mat-error>
                     }                    
-                    @else if (newUser.hasError('PasswordNoMatch')) {
+                    @else if (newUser.errors?.['PasswordNoMatch']) {
                         <mat-error>Passwords do not match</mat-error>
                     }                                                                         
                 </mat-form-field> 

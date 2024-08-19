@@ -1,25 +1,30 @@
 @if (filterForm) {
   <form class="search-panel" [formGroup]="filterForm" (ngSubmit)="submit()">
-    <mat-expansion-panel>
+    <mat-expansion-panel [(expanded)]="panelOpenState">
       <mat-expansion-panel-header>
         <mat-panel-title>Countries</mat-panel-title>
         <mat-panel-description>{{countryList.selectedOptions.selected.length}} / {{countries().length}}</mat-panel-description>
       </mat-expansion-panel-header>
       <mat-selection-list #countryList [formControl]="countriesControl">
-        @for (country of countries(); track country) {
+        @for (state of countryStates(); track state.country) {
           <mat-list-option togglePosition="before" 
-          [value]="country" 
-          [selected]="selectedCountries.includes(country)">{{country}}</mat-list-option>
+          [value]="state.country" 
+          [selected]="state.selected">{{state.country}}</mat-list-option>
         }
       </mat-selection-list>
     </mat-expansion-panel>
     <div>   
       <p><mat-slide-toggle formControlName="showCases">Show cases</mat-slide-toggle></p>
-      <p><mat-slide-toggle formControlName="showVaccination">Show vaccination data</mat-slide-toggle></p>
-      <p><mat-slide-toggle formControlName="showCharts">Show charts</mat-slide-toggle></p>
+      <p><mat-slide-toggle formControlName="showVaccination">Show vaccination data</mat-slide-toggle>
+        @if (filterForm.errors?.['NoDataSelected']) {
+          <br><span style="color: red; font-size: 75%;">Please select at least one information to show!</span>
+        }
+      </p>      
+      <p><mat-slide-toggle formControlName="showCharts">Show charts</mat-slide-toggle></p>      
     </div>
     <div style="text-align: center; width: 80%;">
-      <button mat-raised-button color="primary" type="submit">Search</button>
+      <button mat-raised-button color="primary" type="submit" 
+        [disabled]="filterForm.invalid">Search</button>
     </div>
   </form>
 }

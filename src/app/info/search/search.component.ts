@@ -4,7 +4,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Filter } from '../models/filter.model';
 
 
@@ -18,9 +18,9 @@ import { Filter } from '../models/filter.model';
 })
 export class SearchComponent implements OnInit {
     
-  protected countries = signal<string[]>(countries.toSorted());
+  protected countries = signal<string[]>(countries.toSorted()); // Valid countries in order
 
-  @Input() selectedCountries = countries.toSorted();
+  @Input() selectedCountries = countries.toSorted();    // Initially selected countries
 
   @Input() showCases = true;
 
@@ -30,29 +30,50 @@ export class SearchComponent implements OnInit {
 
   @Output() onSubmit = new EventEmitter<Filter>;
 
+  protected panelOpenState = signal(false);
+  
   filterForm?: FormGroup; 
   countriesControl = new FormControl();
+  
+  countryStates = signal<{country: string; selected?: boolean;}[]>([]);
 
-  //TODO: avoid electedCountries.includes function call
-  //countryStates?: {country: string; selected?: boolean;} [];
+  atLeastOneDataSelectedValidator: ValidatorFn = (
+    control: AbstractControl
+  ): ValidationErrors | null => {    
+    return control.value.showCases || control.value.showVaccination
+      ? null
+      : { NoDataSelected: true };      
+  };  
 
   ngOnInit() {
 
-    // TODO: validade to assure that at least one option is selected
+    // Set up initial checkbox states (to avoid function call from template)
+    countries.forEach(country => {
+      this.countryStates.set([
+        ...this.countryStates(),
+        { 
+          country, 
+          selected: this.selectedCountries.includes(country) 
+        }
+      ])
+    })
+    
     this.filterForm = new FormGroup({
       countries: this.countriesControl,
       showCases: new FormControl<boolean>(this.showCases),
       showVaccination: new FormControl<boolean>(this.showVaccination),
       showCharts: new FormControl<boolean>(this.showCharts),
-    });  
+    },
+      this.atLeastOneDataSelectedValidator,
+    );  
   }
 
-  submit() {
-    // TODO: Csak regisztrált látogatók, vagy olyanok látogathatják az oldalt, akik
-    // még nem küldtek be három keresést
+  submit() {    
     if(!this.filterForm) {
       return;
-    }   
+    }
+    
+    this.panelOpenState.set(false);
 
     this.onSubmit.emit({      
       countries: this.countriesControl.value ?? this.selectedCountries,
