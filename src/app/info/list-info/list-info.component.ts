@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, signal } from '@angular/core';
-import { InfoComponent } from "../info/info.component";
 import { countries } from '../countries';
 import { SearchComponent } from "../search/search.component";
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -18,7 +17,7 @@ import { ChartComponent } from "../chart/chart.component";
 @Component({
   selector: 'app-list-info',
   standalone: true,
-  imports: [InfoComponent, SearchComponent, MatSidenavModule, MatTableModule, MatProgressSpinnerModule, ChartComponent],
+  imports: [SearchComponent, MatSidenavModule, MatTableModule, MatProgressSpinnerModule, ChartComponent],
   templateUrl: './list-info.component.html',
   styleUrl: './list-info.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
