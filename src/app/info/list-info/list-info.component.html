@@ -1,11 +1,11 @@
 
 <mat-sidenav-container class="container">
     <mat-sidenav mode="side" [opened]="showSearch()">
-        <app-search (onSubmit)="refreshData($event)"/>
+        <app-search (onSubmit)="refreshData($event)" [selectedCountries]="selectedCountries()"/>
     </mat-sidenav>
     <mat-sidenav-content>
         @if (!isLoading()) {
-        <table mat-table [dataSource]="dataSource()">
+        <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortChange($event)">
             
             <ng-container matColumnDef="country">
               <th mat-header-cell *matHeaderCellDef> Country </th>
@@ -13,27 +13,27 @@
             </ng-container>
                       
             <ng-container matColumnDef="confirmed">
-              <th mat-header-cell *matHeaderCellDef> Confirmed </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Confirmed </th>
               <td mat-cell *matCellDef="let data"> {{data.confirmed}} </td>
             </ng-container>          
             
             <ng-container matColumnDef="deaths">
-              <th mat-header-cell *matHeaderCellDef> Deaths </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Deaths </th>
               <td mat-cell *matCellDef="let data"> {{data.deaths}} </td>
             </ng-container>
 
             <ng-container matColumnDef="recovered">
-              <th mat-header-cell *matHeaderCellDef> Recovered </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Recovered </th>
               <td mat-cell *matCellDef="let data"> {{data.recovered > 0 ? data.recovered : 'N/A'}} </td>
             </ng-container>
 
             <ng-container matColumnDef="administered">
-              <th mat-header-cell *matHeaderCellDef> Administered </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Administered </th>
               <td mat-cell *matCellDef="let data"> {{data.administered}} </td>
             </ng-container>
 
             <ng-container matColumnDef="people_vaccinated">
-              <th mat-header-cell *matHeaderCellDef> Vaccinated </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Vaccinated </th>
               <td mat-cell *matCellDef="let data"> {{data.people_vaccinated}} </td>
             </ng-container>
           
@@ -44,10 +44,10 @@
 
           <div class="charts">
             @if (showCasesChart()) {
-              <app-chart type="cases" [dataSource]="dataSource()"/>
+              <app-chart type="cases" [dataSource]="data()"/>
             }
             @if (showVaccinationChart()) {
-              <app-chart type="vaccination" [dataSource]="dataSource()"/>
+              <app-chart type="vaccination" [dataSource]="data()"/>
             }
           </div>
         }

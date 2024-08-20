@@ -48,7 +48,7 @@ export class SearchComponent implements OnInit {
   ngOnInit() {
 
     // Set up initial checkbox states (to avoid function call from template)
-    countries.forEach(country => {
+    this.countries().forEach(country => {
       this.countryStates.set([
         ...this.countryStates(),
         { 

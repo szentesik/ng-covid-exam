@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, signal, ViewChild } from '@angular/core';
 import { countries } from '../countries';
 import { SearchComponent } from "../search/search.component";
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { CovidInfoService } from '../covid-info.service';
 import { finalize, of, switchMap, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -13,16 +13,19 @@ import { AuthService } from '../../user/auth.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChartComponent } from "../chart/chart.component";
+import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-list-info',
   standalone: true,
-  imports: [SearchComponent, MatSidenavModule, MatTableModule, MatProgressSpinnerModule, ChartComponent],
+  imports: [SearchComponent, MatSidenavModule, MatTableModule, 
+    MatProgressSpinnerModule, MatSortModule, ChartComponent],
   templateUrl: './list-info.component.html',
   styleUrl: './list-info.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListInfoComponent {
+export class ListInfoComponent implements AfterViewInit {
+ 
   protected countries = signal<string[]>(countries.toSorted());  
 
   protected showSearch = signal(true);
@@ -33,8 +36,10 @@ export class ListInfoComponent {
   private readonly ACTIVE_FILTER_KEY = 'active-filter';
 
   displayedColumns = signal<string[]>([]);
+  selectedCountries = signal<string[]>(this.countries());
 
-  dataSource = signal<CovidInfo[]>([]);
+  data = signal<CovidInfo[]>([]);
+  dataSource = new MatTableDataSource(this.data());
 
   isLoading = signal(false);  
 
@@ -48,9 +53,16 @@ export class ListInfoComponent {
 
     const filter = sessionStorage.getItem(this.ACTIVE_FILTER_KEY);
     if(filter) {           
-      this.refreshData(JSON.parse(filter))
+      const activeFilter: Filter = JSON.parse(filter);
+      this.selectedCountries.set(activeFilter.countries);
+      this.refreshData(activeFilter);      
     }
-  }  
+  }    
+  
+  @ViewChild(MatSort) sort!: MatSort;
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+  }
   
   refreshData(filter: Filter) {
     console.log('refreshData:', JSON.stringify(filter));    
@@ -64,7 +76,7 @@ export class ListInfoComponent {
       this.router.navigate(['/register']);
     }
 
-    sessionStorage.setItem(this.ACTIVE_FILTER_KEY, JSON.stringify(filter));    
+    sessionStorage.setItem(this.ACTIVE_FILTER_KEY, JSON.stringify(filter));
     
     // Set displayed columns
     this.displayedColumns.set([
@@ -84,12 +96,9 @@ export class ListInfoComponent {
         'administered',
         'people_vaccinated'
       ]);
-    }    
+    }       
 
-    
-
-    // Retrieve data
-    // TODO: move to separate datasource object
+    // Retrieve data    
     let dataSet: CovidInfo[] = [];
     this.covidInfoService.getCasesMultiple(filter.countries).pipe(
       tap(res => dataSet = res),
@@ -107,7 +116,8 @@ export class ListInfoComponent {
         })
         return of(dataSet);
       }),      
-      tap(this.dataSource.set),
+      tap(this.data.set),
+      tap(() => this.dataSource.data = this.data()),
       tap(() => {
           this.showCasesChart.set(filter.showCharts && filter.showCases);
           this.showVaccinationChart.set(filter.showCharts && filter.showVaccination);
@@ -116,4 +126,8 @@ export class ListInfoComponent {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe();
   }  
+  
+  sortChange(sortState: Sort) {
+    this.dataSource.sort = this.sort;
+  }
 }
